@@ -1,4 +1,14 @@
-## 🦙🌲🤏 Alpaca-LoRA: Low-Rank LLaMA Instruct-Tuning
+## 🦙🌲🤏 Alpaca-LoRA: Low-Rank LLaMA Conversation-Tuning
+
+⚠️ This is a clone of https://github.com/tloen/alpaca-lora ⚠️
+
+The work haven't started yet. The goal will be to change the script to more easily train LLaMa on conversational data.
+
+#######
+
+Initial Readme:
+
+######
 
 - Try the pretrained model out on Colab [here](https://colab.research.google.com/drive/1eWAmesrW99p7e1nah5bipn0zikMb8XYC)
 - Share custom LoRA adapters, including adapters for the larger models, [here](https://github.com/tloen/alpaca-lora/issues/52)
