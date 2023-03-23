@@ -61,22 +61,22 @@ else:
     )
 
 
-def generate_prompt(instruction, input=None):
-    if input:
-        return f"""Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
+def generate_prompt(input, context=None):
+    if context:
+        return f"""Input is a chat conversation between two people. Write a response, considering the context of the conversation.
 
-### Instruction:
-{instruction}
+### Context:
+{context}
 
 ### Input:
 {input}
 
 ### Response:"""
     else:
-        return f"""Below is an instruction that describes a task. Write a response that appropriately completes the request.
+        return f"""Input is a chat conversation between two people. Write a response.
 
-### Instruction:
-{instruction}
+### Input:
+{input}
 
 ### Response:"""
 
@@ -89,8 +89,8 @@ if torch.__version__ >= "2" and sys.platform != "win32":
 
 
 def evaluate(
-    instruction,
-    input=None,
+    input,
+    context=None,
     temperature=0.1,
     top_p=0.75,
     top_k=40,
@@ -98,7 +98,7 @@ def evaluate(
     max_new_tokens=128,
     **kwargs,
 ):
-    prompt = generate_prompt(instruction, input)
+    prompt = generate_prompt(input, context)
     inputs = tokenizer(prompt, return_tensors="pt")
     input_ids = inputs["input_ids"].to(device)
     generation_config = GenerationConfig(
@@ -125,9 +125,9 @@ gr.Interface(
     fn=evaluate,
     inputs=[
         gr.components.Textbox(
-            lines=2, label="Instruction", placeholder="Tell me about alpacas."
+            lines=2, label="Conversation", placeholder="Bob: Hi Joe! How are you?"
         ),
-        gr.components.Textbox(lines=2, label="Input", placeholder="none"),
+        gr.components.Textbox(lines=2, label="Context", placeholder="Bob is a middle-age guy."),
         gr.components.Slider(minimum=0, maximum=1, value=0.1, label="Temperature"),
         gr.components.Slider(minimum=0, maximum=1, value=0.75, label="Top p"),
         gr.components.Slider(minimum=0, maximum=100, step=1, value=40, label="Top k"),

@@ -34,8 +34,8 @@ TARGET_MODULES = [
     "q_proj",
     "v_proj",
 ]
-DATA_PATH = "alpaca_data_cleaned.json"
-OUTPUT_DIR = "lora-alpaca"
+DATA_PATH = "training_conversations.json"
+OUTPUT_DIR = "llama-conversations"
 
 device_map = "auto"
 world_size = int(os.environ.get("WORLD_SIZE", 1))
@@ -70,25 +70,25 @@ data = load_dataset("json", data_files=DATA_PATH)
 
 def generate_prompt(data_point):
     # sorry about the formatting disaster gotta move fast
-    if data_point["input"]:
-        return f"""Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
+    if data_point["context"]:
+        return f"""Input is a chat conversation between two people. Write a response, considering the context of the conversation.
 
-### Instruction:
-{data_point["instruction"]}
+### Context:
+{data_point["context"]}
 
 ### Input:
-{data_point["input"]}
+{'\n'.join(data_point["input"])}
 
 ### Response:
-{data_point["output"]}"""
+{'\n'.join(data_point["output"])}"""
     else:
-        return f"""Below is an instruction that describes a task. Write a response that appropriately completes the request.
+        return f"""Input is a chat conversation between two people. Write a response.
 
-### Instruction:
-{data_point["instruction"]}
+### Input:
+{'\n'.join(data_point["input"])}
 
 ### Response:
-{data_point["output"]}"""
+{'\n'.join(data_point["output"])}"""
 
 
 def tokenize(prompt):
@@ -111,23 +111,23 @@ def generate_and_tokenize_prompt(data_point):
     # so that our loss is computed only on the response.
     user_prompt = (
         (
-            f"""Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
+            f"""Input is a chat conversation between two people. Write a response, considering the context of the conversation.
 
-### Instruction:
-{data_point["instruction"]}
+### Contect:
+{data_point["context"]}
 
 ### Input:
-{data_point["input"]}
+{'\n'.join(data_point["input"])}
 
 ### Response:
 """
         )
-        if data_point["input"]
+        if data_point["context"]
         else (
-            f"""Below is an instruction that describes a task. Write a response that appropriately completes the request.
+            f"""Input is a chat conversation between two people. Write a response.
 
-### Instruction:
-{data_point["instruction"]}
+### Input:
+{'\n'.join(data_point["input"])}
 
 ### Response:
 """

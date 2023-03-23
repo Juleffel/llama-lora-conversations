@@ -1,0 +1,23 @@
+[
+  {
+    "context": "Bob is a guy. Terry is a guy.",
+    "input": [
+      "Bob: Hello!",
+      "Terry: Hi Bob, how are you?",
+      "Bob: Fine! Thank you :p",
+      "Bob: What did you do this weekend?"
+    ],
+    "output": [
+      "Terry: I went to the movies with my friends."
+    ]
+  },
+  {
+    "input": [
+      "Bob: What's the matter with you?",
+      "Terry: What do you mean?"
+    ],
+    "output": [
+      "Bob: I haven't heard a word in days!"
+    ]
+  }
+]
