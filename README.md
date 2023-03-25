@@ -35,16 +35,53 @@ pip install -r requirements.txt
 
 2. If bitsandbytes doesn't work, [install it from source.](https://github.com/TimDettmers/bitsandbytes/blob/main/compile_from_source.md) Windows users can follow [these instructions](https://github.com/tloen/alpaca-lora/issues/17).
 
-### Inference (`generate.py`)
-
-This file reads the foundation model from the Hugging Face model hub and the LoRA weights from `tloen/alpaca-lora-7b`, and runs a Gradio interface for inference on a specified input. Users should treat this as example code for the use of the model, and modify it as needed.
-
 ### Training (`finetune.py`)
 
 This file contains a straightforward application of PEFT to the LLaMA model,
 as well as some code related to prompt construction and tokenization.
-Near the top of this file is a set of hardcoded hyperparameters that you should feel free to modify.
 PRs adapting this code to support larger models are always welcome.
+
+Example usage:
+
+```bash
+python finetune.py \
+    --base_model 'decapoda-research/llama-7b-hf' \
+    --data_path './alpaca_data_cleaned.json' \
+    --output_dir './lora-alpaca'
+```
+
+We can also tweak our hyperparameters:
+```bash
+python finetune.py \
+    --base_model 'decapoda-research/llama-7b-hf' \
+    --data_path './alpaca_data_cleaned.json' \
+    --output_dir './lora-alpaca' \
+    --batch_size 128 \
+    --micro_batch_size 4 \
+    --num_epochs 3 \
+    --learning_rate 1e-4 \
+    --cutoff_len 512 \
+    --val_set_size 2000 \
+    --lora_r 8 \
+    --lora_alpha 16 \
+    --lora_dropout 0.05 \
+    --lora_target_modules '[q_proj,v_proj]' \
+    --train_on_inputs \
+    --group_by_length
+```
+
+### Inference (`generate.py`)
+
+This file reads the foundation model from the Hugging Face model hub and the LoRA weights from `tloen/alpaca-lora-7b`, and runs a Gradio interface for inference on a specified input. Users should treat this as example code for the use of the model, and modify it as needed.
+
+Example usage:
+
+```bash
+python generate.py \
+    --load_8bit \
+    --base_model 'decapoda-research/llama-7b-hf' \
+    --lora_weights 'tloen/alpaca-lora-7b'
+```
 
 ### Checkpoint export (`export_*_checkpoint.py`)
 
@@ -77,20 +114,23 @@ as well as [clusters of bad examples](https://atlas.nomic.ai/map/d2139cc3-bc1c-4
 - [Alpaca-LoRA-Serve](https://github.com/deep-diver/Alpaca-LoRA-Serve), a ChatGPT-style interface for Alpaca models
 - [AlpacaDataCleaned](https://github.com/gururise/AlpacaDataCleaned), a project to improve the quality of the Alpaca dataset
 - Various adapter weights (download at own risk):
-  - 7B (decapoda-research/llama-7b-hf):
+  - 7B:
     - https://huggingface.co/tloen/alpaca-lora-7b
     - https://huggingface.co/samwit/alpaca7B-lora
     - 🇧🇷 https://huggingface.co/22h/cabrita-lora-v0-1
     - 🇨🇳 https://huggingface.co/qychen/luotuo-lora-7b-0.1
     - 🇯🇵 https://huggingface.co/kunishou/Japanese-Alapaca-LoRA-7b-v0
     - 🇫🇷 https://huggingface.co/bofenghuang/vigogne-lora-7b
-  - 13B (decapoda-research/llama-13b-hf):
+    - 🇹🇭 https://huggingface.co/Thaweewat/thai-buffala-lora-7b-v0-1
+    - 🇩🇪 https://huggingface.co/thisserand/alpaca_lora_german
+    - 🇮🇹 https://huggingface.co/teelinsan/camoscio-7b-llama
+  - 13B:
     - https://huggingface.co/chansung/alpaca-lora-13b
     - https://huggingface.co/mattreid/alpaca-lora-13b
     - https://huggingface.co/samwit/alpaca13B-lora
     - 🇯🇵 https://huggingface.co/kunishou/Japanese-Alapaca-LoRA-13b-v0
     - 🇰🇷 https://huggingface.co/chansung/koalpaca-lora-13b
-  - 30B: (decapoda-research/llama-30b-hf)
+  - 30B:
     - https://huggingface.co/baseten/alpaca-30b
     - https://huggingface.co/chansung/alpaca-lora-30b
     - 🇯🇵 https://huggingface.co/kunishou/Japanese-Alapaca-LoRA-30b-v0
